@@ -11,6 +11,7 @@ import {
 import { Bot, Newspaper } from 'lucide-react';
 import { Article } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { summarizeArticle } from '@/ai/flows/summarize-flow';
 
 interface SummarizeDialogProps {
   open: boolean;
@@ -30,10 +31,8 @@ export function SummarizeDialog({ open, onOpenChange, article }: SummarizeDialog
         setError('');
         setSummary('');
         try {
-          // Temporarily disabled
-          // const result = await summarizeArticle({ content: article.content });
-          // setSummary(result.summary);
-          setSummary("The AI summarization feature is temporarily disabled due to a configuration issue. Please try again later.");
+          const result = await summarizeArticle({ content: article.content });
+          setSummary(result.summary);
         } catch (err) {
           console.error(err);
           setError('Failed to generate summary. Please check your Gemini API key and try again.');
