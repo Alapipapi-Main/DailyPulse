@@ -6,6 +6,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarSeparator,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -33,6 +34,7 @@ export function AppSidebar() {
           </h1>
         </div>
       </SidebarHeader>
+      <SidebarSeparator />
       <SidebarContent className="p-2">
         <SidebarMenu>
           {menuItems.map((item) => (
