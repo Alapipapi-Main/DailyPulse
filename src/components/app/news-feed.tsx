@@ -22,16 +22,10 @@ export default function NewsFeed({ articles: predefinedArticles }: NewsFeedProps
       return;
     };
 
-    setIsLoading(true);
     const fetchArticles = async () => {
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      const allArticles = getNewsArticles();
-      const filteredArticles =
-        selectedInterests.length > 0
-          ? allArticles.filter((article) => selectedInterests.includes(article.category))
-          : allArticles;
-      setArticles(filteredArticles);
+      setIsLoading(true);
+      const fetchedArticles = await getNewsArticles(selectedInterests);
+      setArticles(fetchedArticles);
       setIsLoading(false);
     };
 
@@ -58,9 +52,9 @@ export default function NewsFeed({ articles: predefinedArticles }: NewsFeedProps
   if (articles.length === 0 && !predefinedArticles) {
       return (
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center mt-16">
-            <h3 className="text-xl font-medium">No articles for your interests</h3>
+            <h3 className="text-xl font-medium">No articles found</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              Try selecting more interests to broaden your feed.
+              Try selecting different interests or check your NewsAPI key.
             </p>
           </div>
       )
