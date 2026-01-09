@@ -1,3 +1,5 @@
+'use server';
+
 import { categories, type Article, type Category } from './types';
 
 const API_KEY = process.env.NEWS_API_KEY;
@@ -61,6 +63,5 @@ async function fetchNews(
 
 
 export async function getNewsArticles(interests: Category[]): Promise<Article[]> {
-  // In a real app, this would be an API call.
   return await fetchNews(interests);
 }

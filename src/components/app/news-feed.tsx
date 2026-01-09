@@ -17,11 +17,14 @@ export default function NewsFeed({ articles: predefinedArticles }: NewsFeedProps
   const selectedInterests = useNewsStore((state) => state.interests);
 
   useEffect(() => {
+    // If we have predefined articles (like on the saved page), just use them.
     if (predefinedArticles) {
       setArticles(predefinedArticles);
+      setIsLoading(false);
       return;
-    };
+    }
 
+    // Otherwise, fetch articles based on interests from the store.
     const fetchArticles = async () => {
       setIsLoading(true);
       const fetchedArticles = await getNewsArticles(selectedInterests);
@@ -31,6 +34,7 @@ export default function NewsFeed({ articles: predefinedArticles }: NewsFeedProps
 
     fetchArticles();
   }, [selectedInterests, predefinedArticles]);
+
 
   if (isLoading) {
     return (
