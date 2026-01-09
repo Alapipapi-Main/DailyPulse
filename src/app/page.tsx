@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { useNewsStore } from '@/store/use-news-store';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Article, Category } from '@/lib/types';
+import { Article } from '@/lib/types';
 import { getNewsArticles } from '@/lib/news';
 
 export default function Home() {
@@ -18,27 +18,41 @@ export default function Home() {
 
   useEffect(() => {
     async function load() {
-      if (!isOnboarded) {
+      // Don't do anything until the store is hydrated and we know the onboarding status
+      if (useNewsStore.persist.hasHydrated() && !isOnboarded) {
         router.replace('/onboarding');
         return;
       }
       
-      try {
-        const articles = await getNewsArticles(interests);
-        setInitialArticles(articles);
-      } catch (error) {
-        console.error("Failed to fetch initial articles", error);
-      } finally {
-        setIsLoading(false);
+      if (isOnboarded) {
+        try {
+          const articles = await getNewsArticles(interests);
+          setInitialArticles(articles);
+        } catch (error) {
+          console.error("Failed to fetch initial articles", error);
+        } finally {
+          setIsLoading(false);
+        }
       }
     }
-    load();
+    
+    // Check hydration status before loading
+    if (useNewsStore.persist.hasHydrated()) {
+      load();
+    } else {
+      // Subscribe to hydration event
+      const unsub = useNewsStore.persist.onFinishHydration(() => {
+        load();
+        unsub(); // Unsubscribe once done
+      });
+    }
+
   }, [isOnboarded, interests, router]);
 
-  if (isLoading) {
+  // A more robust loading state that waits for hydration
+  if (isLoading || !useNewsStore.persist.hasHydrated()) {
     return (
       <div className="flex h-screen items-center justify-center">
-        {/* You can replace this with a more sophisticated loading spinner */}
         <p>Loading...</p>
       </div>
     );

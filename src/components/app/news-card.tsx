@@ -65,7 +65,7 @@ export function NewsCard({ article }: NewsCardProps) {
             </time>
           </div>
           <div className='flex items-center gap-1'>
-             <div className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+             <div className="text-xs text-muted-foreground transition-opacity flex items-center gap-1">
                 Read more <ExternalLink className="h-3 w-3" />
              </div>
             <Button
