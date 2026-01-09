@@ -6,13 +6,12 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarSeparator,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Rss, Bookmark, Newspaper } from 'lucide-react';
-import { SheetTitle } from '@/components/ui/sheet';
 import { useSidebar } from '@/components/ui/sidebar';
+import { SheetTitle } from '@/components/ui/sheet';
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -58,7 +57,6 @@ export function AppSidebar() {
           ))}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarSeparator />
     </>
   );
 }
