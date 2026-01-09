@@ -7,12 +7,12 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarSeparator,
-  useSidebar,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Rss, Bookmark, Newspaper } from 'lucide-react';
 import { SheetTitle } from '@/components/ui/sheet';
+import { useSidebar } from '@/components/ui/sidebar';
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -26,7 +26,7 @@ export function AppSidebar() {
   return (
     <>
       <SidebarHeader>
-        {isMobile && <SheetTitle>DailyPulse</SheetTitle>}
+        {isMobile && <SheetTitle />}
         <div className="flex h-[57px] items-center gap-3 px-3">
           <Newspaper className="h-8 w-8 shrink-0 text-primary" />
           <h1 className="text-xl font-headline font-bold group-data-[collapsible=icon]:hidden">
