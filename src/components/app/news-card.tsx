@@ -24,9 +24,9 @@ export function NewsCard({ article }: NewsCardProps) {
   const saved = isArticleSaved(article.id);
 
   return (
-    <Card className="flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl">
+    <Card className="flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl group">
       <CardHeader className="p-0">
-        <div className="relative aspect-[16/10] overflow-hidden">
+        <div className="relative aspect-[16/10] overflow-hidden rounded-t-lg">
           <Image
             src={article.imageUrl}
             alt={article.headline}
@@ -35,15 +35,16 @@ export function NewsCard({ article }: NewsCardProps) {
             data-ai-hint={article.imageHint}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
+           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         </div>
-        <div className="p-4 space-y-2 pb-2">
-          <Badge variant="secondary">{article.category}</Badge>
-          <CardTitle className="font-headline text-lg leading-tight">
+        <div className="p-4 space-y-2 pb-2 absolute bottom-0">
+           <Badge variant="secondary" className="text-xs">{article.category}</Badge>
+          <CardTitle className="font-headline text-lg leading-tight text-white">
             {article.headline}
           </CardTitle>
         </div>
       </CardHeader>
-      <CardContent className="flex-grow p-4 pt-0">
+      <CardContent className="flex-grow p-4 pt-4">
         <p className="text-sm text-muted-foreground line-clamp-3">{article.content}</p>
       </CardContent>
       <CardFooter className="flex justify-between items-center p-4 pt-0">
@@ -58,9 +59,9 @@ export function NewsCard({ article }: NewsCardProps) {
           size="icon"
           onClick={() => toggleSaveArticle(article)}
           aria-label={saved ? 'Unsave article' : 'Save article'}
-          className={cn('text-muted-foreground hover:text-primary', saved && 'text-primary')}
+          className={cn('text-muted-foreground hover:text-accent', saved && 'text-accent')}
         >
-          <Bookmark className={cn(saved && 'fill-current')} />
+          <Bookmark className={cn('h-5 w-5', saved && 'fill-current')} />
         </Button>
       </CardFooter>
     </Card>

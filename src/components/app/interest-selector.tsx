@@ -36,25 +36,22 @@ export function InterestSelector() {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <h2 className="text-2xl font-headline font-bold">Your Interests</h2>
-      <div className="flex flex-wrap justify-start gap-2">
-        {categories.map((category) => {
-          const Icon = categoryIcons[category];
-          const isSelected = selectedInterests.includes(category);
-          return (
-            <Button
-              key={category}
-              variant={isSelected ? 'default' : 'outline'}
-              onClick={() => handleToggle(category)}
-              className="flex gap-2"
-            >
-              <Icon className="h-4 w-4" />
-              {category}
-            </Button>
-          );
-        })}
-      </div>
+    <div className="flex flex-wrap justify-start gap-3">
+      {categories.map((category) => {
+        const Icon = categoryIcons[category];
+        const isSelected = selectedInterests.includes(category);
+        return (
+          <Button
+            key={category}
+            variant={isSelected ? 'default' : 'outline'}
+            onClick={() => handleToggle(category)}
+            className="flex gap-2 rounded-full transition-all duration-200"
+          >
+            <Icon className="h-4 w-4" />
+            {category}
+          </Button>
+        );
+      })}
     </div>
   );
 }
