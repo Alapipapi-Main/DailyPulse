@@ -10,7 +10,7 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 
 interface NewsFeedProps {
-  articles?: Article[]; // For saved articles page
+  articles?: Article[]; // For saved articles or initial load
 }
 
 export default function NewsFeed({ articles: predefinedArticles }: NewsFeedProps) {
@@ -19,14 +19,15 @@ export default function NewsFeed({ articles: predefinedArticles }: NewsFeedProps
   const selectedInterests = useNewsStore((state) => state.interests);
 
   useEffect(() => {
-    // If we have predefined articles (like on the saved page), just use them.
+    // If we have predefined articles (like on the saved page or initial load), use them.
     if (predefinedArticles) {
       setArticles(predefinedArticles);
       setIsLoading(false);
       return;
     }
 
-    // Otherwise, fetch articles based on interests from the store.
+    // Otherwise, fetch articles based on interests from the store. This will trigger
+    // when interests change in the InterestSelector on the main page.
     const fetchArticles = async () => {
       setIsLoading(true);
       if (selectedInterests.length > 0) {

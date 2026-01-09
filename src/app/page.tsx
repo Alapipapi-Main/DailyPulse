@@ -6,21 +6,42 @@ import NewsFeed from '@/components/app/news-feed';
 import { Separator } from '@/components/ui/separator';
 import { useNewsStore } from '@/store/use-news-store';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Article, Category } from '@/lib/types';
+import { getNewsArticles } from '@/lib/news';
 
 export default function Home() {
-  const isOnboarded = useNewsStore((state) => state.isOnboarded);
+  const { isOnboarded, interests } = useNewsStore();
   const router = useRouter();
+  const [initialArticles, setInitialArticles] = useState<Article[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!isOnboarded) {
-      router.replace('/onboarding');
+    async function load() {
+      if (!isOnboarded) {
+        router.replace('/onboarding');
+        return;
+      }
+      
+      try {
+        const articles = await getNewsArticles(interests);
+        setInitialArticles(articles);
+      } catch (error) {
+        console.error("Failed to fetch initial articles", error);
+      } finally {
+        setIsLoading(false);
+      }
     }
-  }, [isOnboarded, router]);
+    load();
+  }, [isOnboarded, interests, router]);
 
-  if (!isOnboarded) {
-    // You can show a loading spinner here while redirecting
-    return null;
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        {/* You can replace this with a more sophisticated loading spinner */}
+        <p>Loading...</p>
+      </div>
+    );
   }
   
   return (
@@ -37,7 +58,7 @@ export default function Home() {
         </div>
         <InterestSelector />
         <Separator />
-        <NewsFeed />
+        <NewsFeed articles={initialArticles} />
       </main>
     </AppLayout>
   );
