@@ -6,6 +6,8 @@ import { getNewsArticles } from '@/lib/news';
 import { Article } from '@/lib/types';
 import { NewsCard } from './news-card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '../ui/button';
+import Link from 'next/link';
 
 interface NewsFeedProps {
   articles?: Article[]; // For saved articles page
@@ -27,13 +29,17 @@ export default function NewsFeed({ articles: predefinedArticles }: NewsFeedProps
     // Otherwise, fetch articles based on interests from the store.
     const fetchArticles = async () => {
       setIsLoading(true);
-      const fetchedArticles = await getNewsArticles(selectedInterests);
-      setArticles(fetchedArticles);
+      if (selectedInterests.length > 0) {
+        const fetchedArticles = await getNewsArticles(selectedInterests);
+        setArticles(fetchedArticles);
+      } else {
+        setArticles([]);
+      }
       setIsLoading(false);
     };
 
     fetchArticles();
-  }, [selectedInterests, predefinedArticles]);
+  }, [selectedInterests, predefinedInterests]);
 
 
   if (isLoading) {
@@ -53,13 +59,18 @@ export default function NewsFeed({ articles: predefinedArticles }: NewsFeedProps
     );
   }
   
-  if (articles.length === 0 && !predefinedArticles) {
+  if (articles.length === 0) {
+      if (predefinedArticles) return null; // Don't show this message on saved articles page if empty
+      
       return (
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center mt-16">
-            <h3 className="text-xl font-medium">No articles found</h3>
+            <h3 className="text-xl font-medium">No articles found for your interests</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              Try selecting different interests or check your NewsAPI key.
+              Try selecting different topics or check your NewsAPI key.
             </p>
+            <Button asChild className="mt-4">
+                <Link href="/settings">Change Interests</Link>
+            </Button>
           </div>
       )
   }

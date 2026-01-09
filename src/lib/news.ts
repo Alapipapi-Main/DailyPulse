@@ -1,46 +1,45 @@
 'use server';
 
-import { categories, type Article, type Category } from './types';
+import { type Article, type Category } from './types';
 
 const API_KEY = process.env.NEWS_API_KEY;
 const BASE_URL = 'https://newsapi.org/v2';
 
-async function fetchNews(
-  interests: Category[]
-): Promise<Article[]> {
+// Map our app's categories to valid NewsAPI categories where possible
+const categoryMapping: Partial<Record<Category, string>> = {
+  Technology: 'technology',
+  Sports: 'sports',
+  Business: 'business',
+  Health: 'health',
+};
+
+async function fetchNewsForCategory(category: Category): Promise<Article[]> {
   if (!API_KEY || API_KEY === 'YOUR_API_KEY_HERE') {
     console.error("News API key is missing. Please add it to your .env file.");
     return [];
   }
 
-  const query = interests.length > 0 ? interests.join(' OR ') : categories.join(' OR ');
-
+  // Use the specific category endpoint if available, otherwise use the general query
+  const apiCategory = categoryMapping[category];
+  const endpoint = apiCategory ? `top-headlines?category=${apiCategory}` : `everything?q=${encodeURIComponent(category)}`;
+  const url = `${BASE_URL}/${endpoint}&apiKey=${API_KEY}&pageSize=10&language=en`;
+  
   try {
-    const response = await fetch(
-      `${BASE_URL}/everything?q=${encodeURIComponent(query)}&apiKey=${API_KEY}&pageSize=20&language=en&sortBy=publishedAt`
-    );
+    const response = await fetch(url);
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('Error fetching news:', errorData.message);
+      console.error(`Error fetching news for ${category}:`, errorData.message);
       return [];
     }
 
     const data = await response.json();
-    
-    // The free developer plan on NewsAPI doesn't allow specifying categories in the query in a structured way for top-headlines.
-    // So we fetch a broad query and then assign categories somewhat randomly for demonstration.
-    // A real app with a paid plan could do this more robustly.
+
     return data.articles
-      .map((article: any, index: number): Article | null => {
-        // Filter out articles without essential data
+      .map((article: any): Article | null => {
         if (!article.title || !article.urlToImage || !article.content) {
           return null;
         }
-
-        const category = interests.length > 0
-          ? interests[index % interests.length]
-          : categories[index % categories.length];
 
         return {
           id: article.url,
@@ -53,15 +52,21 @@ async function fetchNews(
           imageHint: category.toLowerCase(),
         };
       })
-      .filter((article: Article | null): article is Article => article !== null); // Filter out the nulls
-
+      .filter((article: Article | null): article is Article => article !== null);
   } catch (error) {
-    console.error('Failed to fetch news from API:', error);
+    console.error(`Failed to fetch news for ${category} from API:`, error);
     return [];
   }
 }
 
-
 export async function getNewsArticles(interests: Category[]): Promise<Article[]> {
-  return await fetchNews(interests);
+    if (interests.length === 0) {
+        return [];
+    }
+
+    const allArticlePromises = interests.map(fetchNewsForCategory);
+    const articlesByCategory = await Promise.all(allArticlePromises);
+
+    // Flatten the array of arrays and shuffle to mix categories in the feed
+    return articlesByCategory.flat().sort(() => 0.5 - Math.random());
 }

@@ -1,22 +1,28 @@
 'use client';
-
 import { AppLayout } from '@/components/app/app-layout';
 import { Header } from '@/components/app/header';
 import { InterestSelector } from '@/components/app/interest-selector';
 import NewsFeed from '@/components/app/news-feed';
 import { Separator } from '@/components/ui/separator';
-import { Category } from '@/lib/types';
 import { useNewsStore } from '@/store/use-news-store';
-
-// We define the initial interests here, matching the store's default.
-const initialInterests: Category[] = ['Technology', 'AI'];
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Home() {
+  const isOnboarded = useNewsStore((state) => state.isOnboarded);
+  const router = useRouter();
 
-  // The NewsFeed component will now handle its own data fetching on the client side.
-  // We can pass the initial interests to it if needed, or let it pull from the store.
-  // For simplicity, NewsFeed will use the store's state on the client.
+  useEffect(() => {
+    if (!isOnboarded) {
+      router.replace('/onboarding');
+    }
+  }, [isOnboarded, router]);
 
+  if (!isOnboarded) {
+    // You can show a loading spinner here while redirecting
+    return null;
+  }
+  
   return (
     <AppLayout>
       <Header />
