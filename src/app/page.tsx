@@ -11,46 +11,59 @@ import { Article } from '@/lib/types';
 import { getNewsArticles } from '@/lib/news';
 
 export default function Home() {
-  const { isOnboarded, interests } = useNewsStore();
   const router = useRouter();
   const [initialArticles, setInitialArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isHydrated, setIsHydrated] = useState(false);
+  
+  const isOnboarded = useNewsStore((state) => state.isOnboarded);
+  const interests = useNewsStore((state) => state.interests);
 
   useEffect(() => {
+    // This effect ensures we only run logic after the store has been rehydrated from localStorage
+    const unsub = useNewsStore.persist.onFinishHydration(() => {
+      setIsHydrated(true);
+    });
+
+    // If already hydrated, set the state
+    if (useNewsStore.persist.hasHydrated()) {
+      setIsHydrated(true);
+    }
+
+    return () => {
+      unsub();
+    };
+  }, []);
+  
+  useEffect(() => {
+    // This effect handles redirection and data fetching, but only runs when `isHydrated` is true
+    if (!isHydrated) {
+      return; // Do nothing until hydration is complete
+    }
+
     async function load() {
-      // Don't do anything until the store is hydrated and we know the onboarding status
-      if (useNewsStore.persist.hasHydrated() && !isOnboarded) {
+      if (!isOnboarded) {
         router.replace('/onboarding');
         return;
       }
-      
-      if (isOnboarded) {
-        try {
-          const articles = await getNewsArticles(interests);
-          setInitialArticles(articles);
-        } catch (error) {
-          console.error("Failed to fetch initial articles", error);
-        } finally {
-          setIsLoading(false);
-        }
+
+      // If we are here, it means user is onboarded.
+      try {
+        const articles = await getNewsArticles(interests);
+        setInitialArticles(articles);
+      } catch (error) {
+        console.error("Failed to fetch initial articles", error);
+      } finally {
+        setIsLoading(false);
       }
     }
     
-    // Check hydration status before loading
-    if (useNewsStore.persist.hasHydrated()) {
-      load();
-    } else {
-      // Subscribe to hydration event
-      const unsub = useNewsStore.persist.onFinishHydration(() => {
-        load();
-        unsub(); // Unsubscribe once done
-      });
-    }
+    load();
 
-  }, [isOnboarded, interests, router]);
+  }, [isHydrated, isOnboarded, interests, router]);
 
   // A more robust loading state that waits for hydration
-  if (isLoading || !useNewsStore.persist.hasHydrated()) {
+  if (!isHydrated) {
     return (
       <div className="flex h-screen items-center justify-center">
         <p>Loading...</p>
@@ -58,6 +71,24 @@ export default function Home() {
     );
   }
   
+  if (isLoading && isOnboarded) {
+     return (
+      <div className="flex h-screen items-center justify-center">
+        <p>Loading your articles...</p>
+      </div>
+    );
+  }
+
+  // If the user is not onboarded, we should have already redirected.
+  // This is a fallback to prevent flashing the main page content.
+  if (!isOnboarded) {
+    return (
+       <div className="flex h-screen items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <AppLayout>
       <Header />
