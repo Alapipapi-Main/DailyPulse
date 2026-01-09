@@ -8,6 +8,7 @@ import {
   SidebarMenuButton,
   SidebarFooter,
   SidebarSeparator,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { SheetTitle } from '@/components/ui/sheet';
 import Link from 'next/link';
@@ -26,6 +27,7 @@ import { Button } from '../ui/button';
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { isMobile } = useSidebar();
 
   const menuItems = [
     { href: '/', label: 'My Feed', icon: Rss },
@@ -35,7 +37,7 @@ export function AppSidebar() {
   return (
     <>
       <SidebarHeader>
-        <SheetTitle className="sr-only">Sidebar</SheetTitle>
+        {isMobile && <SheetTitle className="sr-only">Sidebar</SheetTitle>}
         <div className="flex h-[57px] items-center gap-3 px-3">
           <Newspaper className="h-8 w-8 shrink-0 text-primary" />
           <h1 className="text-xl font-headline font-bold group-data-[collapsible=icon]:hidden">
