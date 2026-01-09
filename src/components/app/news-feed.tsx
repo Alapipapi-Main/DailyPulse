@@ -39,7 +39,7 @@ export default function NewsFeed({ articles: predefinedArticles }: NewsFeedProps
     };
 
     fetchArticles();
-  }, [selectedInterests, predefinedInterests]);
+  }, [selectedInterests, predefinedArticles]);
 
 
   if (isLoading) {
