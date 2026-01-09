@@ -1,10 +1,8 @@
 'use client';
-import { useState } from 'react';
 import Image from 'next/image';
 import { formatDistanceToNow } from 'date-fns';
 import { Article } from '@/lib/types';
 import { useNewsStore } from '@/store/use-news-store';
-import { summarizeArticleAction } from '@/lib/actions';
 import {
   Card,
   CardContent,
@@ -13,9 +11,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bookmark, Sparkles, Loader2 } from 'lucide-react';
+import { Bookmark } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
 interface NewsCardProps {
@@ -24,26 +21,7 @@ interface NewsCardProps {
 
 export function NewsCard({ article }: NewsCardProps) {
   const { isArticleSaved, toggleSaveArticle } = useNewsStore();
-  const [summary, setSummary] = useState<string | null>(null);
-  const [isSummarizing, setIsSummarizing] = useState(false);
-  const { toast } = useToast();
-
   const saved = isArticleSaved(article.id);
-
-  const handleSummarize = async () => {
-    setIsSummarizing(true);
-    const result = await summarizeArticleAction(article.content);
-    if (result.error) {
-      toast({
-        variant: 'destructive',
-        title: 'Summarization Failed',
-        description: result.error,
-      });
-    } else {
-      setSummary(result.summary);
-    }
-    setIsSummarizing(false);
-  };
 
   return (
     <Card className="flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl">
@@ -66,24 +44,7 @@ export function NewsCard({ article }: NewsCardProps) {
         </div>
       </CardHeader>
       <CardContent className="flex-grow p-4 pt-0">
-        {summary ? (
-          <p className="text-sm text-muted-foreground">{summary}</p>
-        ) : (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleSummarize}
-            disabled={isSummarizing}
-            className="w-full"
-          >
-            {isSummarizing ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Sparkles className="mr-2 h-4 w-4 text-accent-foreground" style={{ color: 'hsl(var(--accent))' }}/>
-            )}
-            Summarize with AI
-          </Button>
-        )}
+        <p className="text-sm text-muted-foreground line-clamp-3">{article.content}</p>
       </CardContent>
       <CardFooter className="flex justify-between items-center p-4 pt-0">
         <div className="text-xs text-muted-foreground">
