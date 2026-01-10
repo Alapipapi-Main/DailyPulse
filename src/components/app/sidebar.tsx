@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Rss, Bookmark, Newspaper, Settings } from 'lucide-react';
 import { useSidebar } from '@/components/ui/sidebar';
-import { SheetTitle } from '@/components/ui/sheet';
+import { ThemeToggle } from './theme-toggle';
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -30,7 +30,6 @@ export function AppSidebar() {
   return (
     <>
       <SidebarHeader>
-        {isMobile && <SheetTitle></SheetTitle>}
         <div className="flex h-[57px] items-center gap-3 px-3">
           <Newspaper className="h-8 w-8 shrink-0 text-primary" />
           <h1 className="text-xl font-headline font-bold group-data-[collapsible=icon]:hidden">
@@ -63,6 +62,9 @@ export function AppSidebar() {
           ))}
         </SidebarMenu>
         <SidebarMenu>
+           <SidebarMenuItem>
+            <ThemeToggle />
+          </SidebarMenuItem>
           {bottomMenuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
