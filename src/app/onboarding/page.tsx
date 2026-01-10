@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useNewsStore } from '@/store/use-news-store';
 import { Newspaper } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { ThemeToggle } from '@/components/app/theme-toggle';
 
 export default function OnboardingPage() {
   const { interests, finishOnboarding } = useNewsStore();
@@ -16,7 +17,10 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4 text-center dark:bg-background">
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-background p-4 text-center dark:bg-background">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <div className="mx-auto w-full max-w-xl space-y-8">
         <div className="flex flex-col items-center gap-4">
           <Newspaper className="h-12 w-12 text-primary" />
