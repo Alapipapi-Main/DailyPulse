@@ -17,7 +17,7 @@ export default function SettingsPage() {
   return (
     <AppLayout>
       <Header />
-      <main className="dark:bg-background flex-1 space-y-8 bg-background p-4 md:p-6 lg:p-8">
+      <main className="flex-1 space-y-8 bg-background p-4 md:p-6 lg:p-8 dark:bg-background">
         <div className="space-y-2">
             <h1 className="text-3xl font-headline font-bold">Settings</h1>
             <p className="text-muted-foreground">Manage your preferences.</p>
