@@ -1,6 +1,7 @@
 'use server';
 
 import { ai } from '@/ai/genkit';
+import { googleAI } from '@genkit-ai/google-genai';
 import {
   ArticleSummaryInputSchema,
   type ArticleSummaryInput,
@@ -18,6 +19,7 @@ const prompt = ai.definePrompt(
     name: 'summarizeArticlePrompt',
     input: { schema: ArticleSummaryInputSchema },
     output: { schema: ArticleSummaryOutputSchema },
+    model: googleAI('gemini-1.5-flash-latest'),
     prompt: `You are a helpful assistant that summarizes news articles.
     
     Summarize the following article content into a clear and concise summary of about 3-4 sentences.
