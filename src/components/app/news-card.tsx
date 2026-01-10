@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bookmark, ExternalLink, Bot } from 'lucide-react';
+import { Bookmark, Bot } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -41,8 +41,7 @@ export function NewsCard({ article }: NewsCardProps) {
 
   return (
     <>
-    <Link href={article.id} target="_blank" rel="noopener noreferrer" className="block group">
-      <Card className="flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl h-full">
+      <Card className="flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl h-full group">
         <div className="relative aspect-[16/10] overflow-hidden rounded-t-lg">
           <Image
             src={article.imageUrl}
@@ -63,8 +62,10 @@ export function NewsCard({ article }: NewsCardProps) {
                 </time>
             </div>
           </div>
-          <CardTitle className="font-headline text-lg leading-tight group-hover:underline">
-            {article.headline}
+          <CardTitle className="font-headline text-lg leading-tight">
+            <Link href={article.id} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                {article.headline}
+            </Link>
           </CardTitle>
         </CardHeader>
         <CardContent className="flex-grow p-4 pt-0">
@@ -75,9 +76,6 @@ export function NewsCard({ article }: NewsCardProps) {
             {article.source}
           </div>
           <div className='flex items-center gap-1'>
-             <div className="text-xs text-muted-foreground flex items-center gap-1">
-                Read more <ExternalLink className="h-3 w-3" />
-             </div>
             <Button
                 variant="ghost"
                 size="icon"
@@ -99,7 +97,6 @@ export function NewsCard({ article }: NewsCardProps) {
           </div>
         </CardFooter>
       </Card>
-    </Link>
     <SummarizeDialog
         open={showSummarizeDialog}
         onOpenChange={setShowSummarizeDialog}
