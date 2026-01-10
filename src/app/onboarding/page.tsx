@@ -17,10 +17,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-background p-4 text-center dark:bg-background">
-      <div className="absolute top-4 right-4">
-        <ThemeToggle />
-      </div>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4 text-center dark:bg-background">
       <div className="mx-auto w-full max-w-xl space-y-8">
         <div className="flex flex-col items-center gap-4">
           <Newspaper className="h-12 w-12 text-primary" />
@@ -34,6 +31,10 @@ export default function OnboardingPage() {
 
         <div className="rounded-lg border bg-card p-6">
           <InterestSelector />
+        </div>
+        
+        <div className='flex justify-center'>
+            <ThemeToggle />
         </div>
 
         <Button
