@@ -37,29 +37,31 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
       <SidebarSeparator />
-      <SidebarContent className="p-2 justify-between flex flex-col">
-        <SidebarMenu>
-          {menuItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname === item.href}
-                tooltip={{
-                  children: item.label,
-                  side: 'right',
-                  align: 'center',
-                }}
-              >
-                <Link href={item.href}>
-                  <item.icon className="shrink-0" />
-                  <span className="group-data-[collapsible=icon]:hidden">
-                    {item.label}
-                  </span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
+      <SidebarContent className="flex flex-col flex-grow p-2">
+        <div className="flex-grow">
+          <SidebarMenu>
+            {menuItems.map((item) => (
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === item.href}
+                  tooltip={{
+                    children: item.label,
+                    side: 'right',
+                    align: 'center',
+                  }}
+                >
+                  <Link href={item.href}>
+                    <item.icon className="shrink-0" />
+                    <span className="group-data-[collapsible=icon]:hidden">
+                      {item.label}
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </div>
         <SidebarMenu>
           {bottomMenuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
