@@ -16,7 +16,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4 text-center">
+    <div className="dark:bg-background flex min-h-screen flex-col items-center justify-center bg-background p-4 text-center">
       <div className="mx-auto w-full max-w-xl space-y-8">
         <div className="flex flex-col items-center gap-4">
           <Newspaper className="h-12 w-12 text-primary" />

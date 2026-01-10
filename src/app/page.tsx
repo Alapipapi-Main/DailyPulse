@@ -1,9 +1,7 @@
 'use client';
 import { AppLayout } from '@/components/app/app-layout';
 import { Header } from '@/components/app/header';
-import { InterestSelector } from '@/components/app/interest-selector';
 import NewsFeed from '@/components/app/news-feed';
-import { Separator } from '@/components/ui/separator';
 import { useNewsStore } from '@/store/use-news-store';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -20,12 +18,10 @@ export default function Home() {
   const interests = useNewsStore((state) => state.interests);
 
   useEffect(() => {
-    // This effect ensures we only run logic after the store has been rehydrated from localStorage
     const unsub = useNewsStore.persist.onFinishHydration(() => {
       setIsHydrated(true);
     });
 
-    // If already hydrated, set the state
     if (useNewsStore.persist.hasHydrated()) {
       setIsHydrated(true);
     }
@@ -36,9 +32,8 @@ export default function Home() {
   }, []);
   
   useEffect(() => {
-    // This effect handles redirection and data fetching, but only runs when `isHydrated` is true
     if (!isHydrated) {
-      return; // Do nothing until hydration is complete
+      return; 
     }
 
     async function load() {
@@ -47,7 +42,6 @@ export default function Home() {
         return;
       }
 
-      // If we are here, it means user is onboarded.
       try {
         const articles = await getNewsArticles(interests);
         setInitialArticles(articles);
@@ -62,7 +56,6 @@ export default function Home() {
 
   }, [isHydrated, isOnboarded, interests, router]);
 
-  // A more robust loading state that waits for hydration
   if (!isHydrated) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -79,8 +72,6 @@ export default function Home() {
     );
   }
 
-  // If the user is not onboarded, we should have already redirected.
-  // This is a fallback to prevent flashing the main page content.
   if (!isOnboarded) {
     return (
        <div className="flex h-screen items-center justify-center">
@@ -98,11 +89,9 @@ export default function Home() {
             Your Daily Pulse
           </h1>
           <p className="text-muted-foreground">
-            Select your interests to personalize your news feed.
+            Here are the latest articles based on your interests.
           </p>
         </div>
-        <InterestSelector />
-        <Separator />
         <NewsFeed articles={initialArticles} />
       </main>
     </AppLayout>
