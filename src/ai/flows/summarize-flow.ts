@@ -19,7 +19,7 @@ const prompt = ai.definePrompt(
     name: 'summarizeArticlePrompt',
     input: { schema: ArticleSummaryInputSchema },
     output: { schema: ArticleSummaryOutputSchema },
-    model: 'gemini-1.5-flash-latest',
+    model: googleAI.model('gemini-1.5-flash-latest'),
     prompt: `You are a helpful assistant that summarizes news articles.
     
     Summarize the following article content into a clear and concise summary of about 3-4 sentences.
