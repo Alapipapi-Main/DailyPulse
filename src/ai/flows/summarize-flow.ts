@@ -1,17 +1,13 @@
 'use server';
 
 import { ai } from '@/ai/genkit';
-import { z } from 'zod';
+import {
+  ArticleSummaryInputSchema,
+  type ArticleSummaryInput,
+  ArticleSummaryOutputSchema,
+  type ArticleSummaryOutput,
+} from '@/lib/types';
 
-export const ArticleSummaryInputSchema = z.object({
-  content: z.string().describe('The full content of the news article to be summarized.'),
-});
-export type ArticleSummaryInput = z.infer<typeof ArticleSummaryInputSchema>;
-
-export const ArticleSummaryOutputSchema = z.object({
-  summary: z.string().describe('A concise summary of the article, around 3-4 sentences.'),
-});
-export type ArticleSummaryOutput = z.infer<typeof ArticleSummaryOutputSchema>;
 
 export async function summarizeArticle(input: ArticleSummaryInput): Promise<ArticleSummaryOutput> {
     return summarizeArticleFlow(input);
