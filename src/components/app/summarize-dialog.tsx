@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { Bot, Newspaper } from 'lucide-react';
+import { Newspaper } from 'lucide-react';
 import { Article } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { summarizeArticle } from '@/ai/flows/summarize-flow';
@@ -31,11 +31,12 @@ export function SummarizeDialog({ open, onOpenChange, article }: SummarizeDialog
         setError('');
         setSummary('');
         try {
+          // The new summarizeArticle function is very fast, but we keep the async structure.
           const result = await summarizeArticle({ content: article.content });
           setSummary(result.summary);
         } catch (err) {
           console.error(err);
-          setError('Failed to generate summary. Please check your Gemini API key and try again.');
+          setError('Failed to generate summary.');
         } finally {
           setIsLoading(false);
         }
@@ -49,8 +50,8 @@ export function SummarizeDialog({ open, onOpenChange, article }: SummarizeDialog
       <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Bot className="h-6 w-6 text-primary" />
-            AI Summary
+            <Newspaper className="h-6 w-6 text-primary" />
+            Article Summary
           </DialogTitle>
           <DialogDescription>
             A quick summary of the article.

@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bookmark, Bot } from 'lucide-react';
+import { Bookmark, Newspaper } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -83,7 +83,7 @@ export function NewsCard({ article }: NewsCardProps) {
                 aria-label="Summarize article"
                 className="text-muted-foreground hover:text-primary"
               >
-              <Bot className="h-5 w-5" />
+              <Newspaper className="h-5 w-5" />
             </Button>
             <Button
               variant="ghost"

@@ -1,49 +1,38 @@
 'use server';
 
-import { ai } from '@/ai/genkit';
-import { googleAI } from '@genkit-ai/google-genai';
 import {
-  ArticleSummaryInputSchema,
   type ArticleSummaryInput,
-  ArticleSummaryOutputSchema,
   type ArticleSummaryOutput,
 } from '@/lib/types';
 
-
 export async function summarizeArticle(input: ArticleSummaryInput): Promise<ArticleSummaryOutput> {
-    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
-        return {
-            summary: "AI summarization is currently unavailable. Please ensure your Gemini API key is configured correctly in the environment variables."
-        };
+    // This is a non-AI summarization. It takes the first 3 sentences of the content.
+    if (!input.content) {
+        return { summary: "No content available to summarize." };
     }
-    return summarizeArticleFlow(input);
+
+    const sentences = input.content.split('. ');
+    let summary = sentences.slice(0, 3).join('. ');
+
+    // Ensure the summary ends with a period if it's not empty and was truncated.
+    if (sentences.length > 3 && summary) {
+        summary += '.';
+    } else if (summary && !summary.endsWith('.')) {
+        // If there are 3 or fewer sentences, it might not end with a period.
+        const lastChar = input.content.trim().slice(-1);
+        if (lastChar === '.' || lastChar === '?' || lastChar === '!') {
+          // a complete sentence
+        } else if (input.content.length > summary.length) {
+          summary += '...';
+        }
+    }
+    
+    // Handle cases where content is very short or has no periods.
+    if (!summary) {
+        summary = input.content;
+    }
+
+    return {
+        summary,
+    };
 }
-
-const prompt = ai.definePrompt(
-  {
-    name: 'summarizeArticlePrompt',
-    input: { schema: ArticleSummaryInputSchema },
-    output: { schema: ArticleSummaryOutputSchema },
-    model: googleAI.model('gemini-1.5-flash'),
-    prompt: `You are a helpful assistant that summarizes news articles.
-    
-    Summarize the following article content into a clear and concise summary of about 3-4 sentences.
-    
-    Article Content:
-    {{{content}}}
-    `,
-  }
-);
-
-
-const summarizeArticleFlow = ai.defineFlow(
-  {
-    name: 'summarizeArticleFlow',
-    inputSchema: ArticleSummaryInputSchema,
-    outputSchema: ArticleSummaryOutputSchema,
-  },
-  async (input) => {
-    const { output } = await prompt(input);
-    return output!;
-  }
-);
