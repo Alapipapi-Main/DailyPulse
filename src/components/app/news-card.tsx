@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useState } from 'react';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 interface NewsCardProps {
   article: Article;
@@ -33,9 +34,9 @@ export function NewsCard({ article }: NewsCardProps) {
   };
 
   const handleImageError = () => {
-    // Sanitize the article ID to create a consistent seed for the placeholder image.
-    const seed = article.id.replace(/[^a-zA-Z0-9]/g, '');
-    setImgSrc(`https://picsum.photos/seed/${seed}/640/400`);
+    if (PlaceHolderImages.length > 0) {
+      setImgSrc(PlaceHolderImages[0].imageUrl);
+    }
   };
 
   return (

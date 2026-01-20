@@ -2,6 +2,7 @@
 
 import { type Article, type Category } from './types';
 import { summarizeArticle } from '@/ai/flows/summarize-flow';
+import { PlaceHolderImages } from './placeholder-images';
 
 const API_KEY = process.env.NEWS_API_KEY;
 const BASE_URL = 'https://newsapi.org/v2';
@@ -35,6 +36,7 @@ async function fetchNewsForCategory(category: Category): Promise<Article[]> {
     }
 
     const data = await response.json();
+    const placeholder = PlaceHolderImages[0];
 
     const articles: Article[] = data.articles
       .map((article: any, index: number): Article | null => {
@@ -51,8 +53,8 @@ async function fetchNewsForCategory(category: Category): Promise<Article[]> {
           category: category,
           imageUrl: article.urlToImage
             ? article.urlToImage.replace(/^http:/, 'https:')
-            : `https://picsum.photos/seed/${category}${index}/640/400`,
-          imageHint: category.toLowerCase(),
+            : placeholder.imageUrl,
+          imageHint: article.urlToImage ? category.toLowerCase() : placeholder.imageHint,
         };
       })
       .filter((article: Article | null): article is Article => article !== null);
