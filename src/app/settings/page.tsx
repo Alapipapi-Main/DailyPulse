@@ -2,7 +2,7 @@
 import { AppLayout } from '@/components/app/app-layout';
 import { Header } from '@/components/app/header';
 import { InterestSelector } from '@/components/app/interest-selector';
-import { ThemeToggle } from '@/components/app/theme-toggle';
+import { ThemeSelector } from '@/components/app/theme-selector';
 import {
   Card,
   CardContent,
@@ -43,7 +43,7 @@ export default function SettingsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ThemeToggle />
+                <ThemeSelector />
               </CardContent>
             </Card>
         </div>

@@ -6,14 +6,13 @@ import { Button } from '@/components/ui/button';
 import { useNewsStore } from '@/store/use-news-store';
 import { Newspaper, Sun, Moon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { ThemeToggle } from '@/components/app/theme-toggle';
 import { useTheme } from '@/context/theme-provider';
 import { cn } from '@/lib/utils';
-import { Card } from '@/components/ui/card';
+import { ThemeSelector } from '@/components/app/theme-selector';
 
 export default function OnboardingPage() {
   const { interests, finishOnboarding } = useNewsStore();
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme();
   const router = useRouter();
   const [step, setStep] = useState(1);
 
@@ -66,43 +65,7 @@ export default function OnboardingPage() {
                 Select your preferred theme to personalize your experience.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-                <button
-                  onClick={() => setTheme('light')}
-                  className={cn(
-                    'rounded-lg border-2 p-4 text-center transition-all',
-                    theme === 'light'
-                      ? 'border-primary ring-2 ring-primary'
-                      : 'border-border'
-                  )}
-                >
-                  <div className="mb-2 overflow-hidden rounded-md border bg-[#F0F0F0]">
-                    <div className="p-4 space-y-2">
-                      <div className="h-4 w-1/2 rounded bg-[#6699CC]"></div>
-                      <div className="h-3 w-3/4 rounded bg-[#D98850]"></div>
-                    </div>
-                  </div>
-                  <p className="font-medium">Light</p>
-                </button>
-                <button
-                  onClick={() => setTheme('dark')}
-                  className={cn(
-                    'rounded-lg border-2 p-4 text-center transition-all',
-                    theme === 'dark'
-                      ? 'border-primary ring-2 ring-primary'
-                      : 'border-border'
-                  )}
-                >
-                  <div className="mb-2 overflow-hidden rounded-md border bg-[#1A1A1A]">
-                    <div className="p-4 space-y-2">
-                       <div className="h-4 w-1/2 rounded bg-[#6699CC]"></div>
-                       <div className="h-3 w-3/4 rounded bg-[#D98850]"></div>
-                    </div>
-                  </div>
-                  <p className="font-medium">Dark</p>
-                </button>
-            </div>
-
+            <ThemeSelector />
             <Button onClick={handleContinue} size="lg" className="w-full">
               Finish Setup
             </Button>
