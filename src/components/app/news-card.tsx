@@ -15,6 +15,7 @@ import { Bookmark } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { useState } from 'react';
 
 interface NewsCardProps {
   article: Article;
@@ -23,6 +24,7 @@ interface NewsCardProps {
 export function NewsCard({ article }: NewsCardProps) {
   const { isArticleSaved, toggleSaveArticle } = useNewsStore();
   const saved = isArticleSaved(article.id);
+  const [imgSrc, setImgSrc] = useState(article.imageUrl);
 
   const handleBookmarkClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -30,16 +32,23 @@ export function NewsCard({ article }: NewsCardProps) {
     toggleSaveArticle(article);
   };
 
+  const handleImageError = () => {
+    // Sanitize the article ID to create a consistent seed for the placeholder image.
+    const seed = article.id.replace(/[^a-zA-Z0-9]/g, '');
+    setImgSrc(`https://picsum.photos/seed/${seed}/640/400`);
+  };
+
   return (
     <Card className="flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl h-full group">
       <div className="relative aspect-[16/10] overflow-hidden rounded-t-lg">
         <Image
-          src={article.imageUrl}
+          src={imgSrc}
           alt={article.headline}
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"
           data-ai-hint={article.imageHint}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          onError={handleImageError}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
       </div>
