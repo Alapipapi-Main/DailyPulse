@@ -11,6 +11,11 @@ import {
 
 
 export async function summarizeArticle(input: ArticleSummaryInput): Promise<ArticleSummaryOutput> {
+    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
+        return {
+            summary: "AI summarization is currently unavailable. Please ensure your Gemini API key is configured correctly in the environment variables."
+        };
+    }
     return summarizeArticleFlow(input);
 }
 
