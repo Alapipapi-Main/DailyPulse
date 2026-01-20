@@ -4,7 +4,7 @@ import { Header } from '@/components/app/header';
 import NewsFeed from '@/components/app/news-feed';
 import { useNewsStore } from '@/store/use-news-store';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { getNewsArticles } from '@/lib/news';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
@@ -14,12 +14,14 @@ export default function Home() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
+  const isInitialRender = useRef(true);
   
-  const { isOnboarded, articles, setArticles, lastFetched } = useNewsStore((state) => ({
+  const { isOnboarded, articles, setArticles, lastFetched, interests } = useNewsStore((state) => ({
     isOnboarded: state.isOnboarded,
     articles: state.articles,
     setArticles: state.setArticles,
     lastFetched: state.lastFetched,
+    interests: state.interests,
   }));
 
   useEffect(() => {
@@ -49,6 +51,7 @@ export default function Home() {
     }
   }, [setArticles]);
   
+  // Effect for initial load & daily refresh
   useEffect(() => {
     if (isHydrated) {
       if (!isOnboarded) {
@@ -65,6 +68,21 @@ export default function Home() {
       }
     }
   }, [isHydrated, isOnboarded, articles.length, handleRefresh, router, lastFetched]);
+
+  // Effect for refreshing when interests change
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    // Skip the initial render to avoid a double fetch.
+    // The first fetch is handled by the effect above.
+    if (isInitialRender.current) {
+      isInitialRender.current = false;
+      return;
+    }
+
+    handleRefresh();
+  }, [interests, isHydrated, handleRefresh]);
+
 
   if (!isHydrated || !isOnboarded) {
     return (
