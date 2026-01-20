@@ -17,7 +17,8 @@ export default function Home() {
   const [isHydrated, setIsHydrated] = useState(false);
   
   const isOnboarded = useNewsStore((state) => state.isOnboarded);
-  const interests = useNewsStore((state) => state.interests);
+  // We no longer subscribe to interests here to prevent auto-refreshing.
+  // We will get them directly from the store inside fetchArticles.
 
   useEffect(() => {
     const unsub = useNewsStore.persist.onFinishHydration(() => {
@@ -41,20 +42,21 @@ export default function Home() {
 
     setIsLoading(true);
     try {
-      const fetchedArticles = await getNewsArticles(interests);
+      const currentInterests = useNewsStore.getState().interests;
+      const fetchedArticles = await getNewsArticles(currentInterests);
       setArticles(fetchedArticles);
     } catch (error) {
       console.error("Failed to fetch articles", error);
     } finally {
       setIsLoading(false);
     }
-  }, [isOnboarded, interests, router]);
+  }, [isOnboarded, router]);
   
   useEffect(() => {
     if (isHydrated) {
       fetchArticles();
     }
-  }, [isHydrated, interests, fetchArticles]);
+  }, [isHydrated, fetchArticles]);
 
   if (!isHydrated) {
     return (
