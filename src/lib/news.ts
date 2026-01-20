@@ -85,6 +85,17 @@ export async function getNewsArticles(interests: Category[]): Promise<Article[]>
     const allArticlePromises = interests.map(fetchNewsForCategory);
     const articlesByCategory = await Promise.all(allArticlePromises);
 
-    // Flatten the array of arrays and shuffle to mix categories in the feed
-    return articlesByCategory.flat().sort(() => 0.5 - Math.random());
+    const flattenedArticles = articlesByCategory.flat();
+
+    // De-duplicate articles based on their ID (URL) to prevent React key errors
+    const uniqueArticlesMap = new Map<string, Article>();
+    for (const article of flattenedArticles) {
+        if (!uniqueArticlesMap.has(article.id)) {
+            uniqueArticlesMap.set(article.id, article);
+        }
+    }
+    const uniqueArticles = Array.from(uniqueArticlesMap.values());
+
+    // Shuffle the unique articles to mix categories in the feed
+    return uniqueArticles.sort(() => 0.5 - Math.random());
 }
