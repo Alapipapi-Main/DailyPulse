@@ -49,7 +49,7 @@ async function fetchNewsForCategory(category: Category): Promise<Article[]> {
           source: article.source.name,
           publishedAt: article.publishedAt,
           category: category,
-          imageUrl: article.urlToImage,
+          imageUrl: article.urlToImage.replace(/^http:/, 'https:'),
           imageHint: category.toLowerCase(),
         };
       })
