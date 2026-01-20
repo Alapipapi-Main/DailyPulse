@@ -5,20 +5,21 @@ import NewsFeed from '@/components/app/news-feed';
 import { useNewsStore } from '@/store/use-news-store';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useCallback } from 'react';
-import { Article } from '@/lib/types';
 import { getNewsArticles } from '@/lib/news';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Home() {
   const router = useRouter();
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   
-  const isOnboarded = useNewsStore((state) => state.isOnboarded);
-  // We no longer subscribe to interests here to prevent auto-refreshing.
-  // We will get them directly from the store inside fetchArticles.
+  const { isOnboarded, articles, setArticles } = useNewsStore((state) => ({
+    isOnboarded: state.isOnboarded,
+    articles: state.articles,
+    setArticles: state.setArticles,
+  }));
 
   useEffect(() => {
     const unsub = useNewsStore.persist.onFinishHydration(() => {
@@ -34,12 +35,7 @@ export default function Home() {
     };
   }, []);
   
-  const fetchArticles = useCallback(async () => {
-    if (!isOnboarded) {
-      router.replace('/onboarding');
-      return;
-    }
-
+  const handleRefresh = useCallback(async () => {
     setIsLoading(true);
     try {
       const currentInterests = useNewsStore.getState().interests;
@@ -50,33 +46,21 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  }, [isOnboarded, router]);
+  }, [setArticles]);
   
   useEffect(() => {
     if (isHydrated) {
-      fetchArticles();
+      if (!isOnboarded) {
+        router.replace('/onboarding');
+      } else if (articles.length === 0) {
+        handleRefresh();
+      }
     }
-  }, [isHydrated, fetchArticles]);
+  }, [isHydrated, isOnboarded, articles.length, handleRefresh, router]);
 
-  if (!isHydrated) {
+  if (!isHydrated || !isOnboarded) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <p>Loading...</p>
-      </div>
-    );
-  }
-  
-  if (isLoading && isOnboarded) {
-     return (
-      <div className="flex h-screen items-center justify-center">
-        <p>Loading your articles...</p>
-      </div>
-    );
-  }
-
-  if (!isOnboarded) {
-    return (
-       <div className="flex h-screen items-center justify-center">
         <p>Loading...</p>
       </div>
     );
@@ -95,12 +79,25 @@ export default function Home() {
               Here are the latest summarized articles based on your interests.
             </p>
           </div>
-           <Button onClick={fetchArticles} disabled={isLoading} size="icon" variant="outline">
+           <Button onClick={handleRefresh} disabled={isLoading} size="icon" variant="outline">
               <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
               <span className="sr-only">Refresh news</span>
             </Button>
         </div>
-        <NewsFeed articles={articles} />
+        
+        {!isLoading && articles.length === 0 ? (
+           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center mt-16">
+            <h3 className="text-xl font-medium">No articles found</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Try refreshing the feed or changing your interests in the settings.
+            </p>
+            <Button asChild className="mt-4">
+                <Link href="/settings">Change Interests</Link>
+            </Button>
+          </div>
+        ) : (
+          <NewsFeed articles={articles} isLoading={isLoading} />
+        )}
       </main>
     </AppLayout>
   );

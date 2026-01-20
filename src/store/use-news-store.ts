@@ -7,7 +7,9 @@ interface NewsState {
   interests: Category[];
   isOnboarded: boolean;
   savedArticles: Article[];
+  articles: Article[];
   setInterests: (interests: Category[]) => void;
+  setArticles: (articles: Article[]) => void;
   finishOnboarding: () => void;
   isArticleSaved: (articleId: string) => boolean;
   toggleSaveArticle: (article: Article) => void;
@@ -19,7 +21,9 @@ export const useNewsStore = create<NewsState>()(
       interests: [],
       isOnboarded: false,
       savedArticles: [],
+      articles: [],
       setInterests: (interests) => set({ interests }),
+      setArticles: (articles) => set({ articles }),
       finishOnboarding: () => set({ isOnboarded: true }),
       isArticleSaved: (articleId) => {
         return get().savedArticles.some((a) => a.id === articleId);

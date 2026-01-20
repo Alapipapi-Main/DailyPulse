@@ -1,51 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useNewsStore } from '@/store/use-news-store';
-import { getNewsArticles } from '@/lib/news';
 import { Article } from '@/lib/types';
 import { NewsCard } from './news-card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '../ui/button';
-import Link from 'next/link';
 
 interface NewsFeedProps {
-  articles?: Article[]; // For saved articles or initial load
+  articles: Article[];
+  isLoading?: boolean;
 }
 
-export default function NewsFeed({ articles: predefinedArticles }: NewsFeedProps) {
-  const [articles, setArticles] = useState<Article[]>(predefinedArticles || []);
-  const [isLoading, setIsLoading] = useState(!predefinedArticles);
-  const selectedInterests = useNewsStore((state) => state.interests);
-
-  useEffect(() => {
-    // If we have predefined articles (like on the saved page or initial load), use them.
-    if (predefinedArticles) {
-      setArticles(predefinedArticles);
-      setIsLoading(false);
-      return;
-    }
-
-    // Otherwise, fetch articles based on interests from the store. This will trigger
-    // when interests change in the InterestSelector on the main page.
-    const fetchArticles = async () => {
-      setIsLoading(true);
-      if (selectedInterests.length > 0) {
-        const fetchedArticles = await getNewsArticles(selectedInterests);
-        setArticles(fetchedArticles);
-      } else {
-        setArticles([]);
-      }
-      setIsLoading(false);
-    };
-
-    fetchArticles();
-  }, [selectedInterests, predefinedArticles]);
-
+export default function NewsFeed({ articles, isLoading }: NewsFeedProps) {
 
   if (isLoading) {
     return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="flex flex-col space-y-3">
             <Skeleton className="aspect-[16/10] w-full rounded-xl" />
@@ -60,21 +28,8 @@ export default function NewsFeed({ articles: predefinedArticles }: NewsFeedProps
     );
   }
   
-  if (articles.length === 0) {
-      if (predefinedArticles) return null; // Don't show this message on saved articles page if empty
-      
-      return (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center mt-16">
-            <h3 className="text-xl font-medium">No articles found for your interests</h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Try selecting different topics or check your NewsAPI key.
-            </p>
-            <Button asChild className="mt-4">
-                <Link href="/settings">Change Interests</Link>
-            </Button>
-          </div>
-      )
-  }
+  // The parent component is now responsible for showing an empty state message.
+  // This component will simply render nothing if the articles array is empty.
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start">
