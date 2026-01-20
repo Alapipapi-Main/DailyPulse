@@ -1,5 +1,7 @@
 # DailyPulse - Your Summarized News Feed
 
+[**Live Demo**](https://daily-pulse-opal.vercel.app/)
+
 DailyPulse is a modern news aggregation app that delivers concise, summarized articles based on your personal interests. Stay informed without the noise, with a clean and customizable reading experience.
 
 ## ✨ Features
@@ -65,6 +67,23 @@ npm run dev
 ```
 
 The application will be available at [http://localhost:9002](http://localhost:9002).
+
+## Deployment
+
+### Vercel
+
+To deploy this application to Vercel, follow these steps:
+
+1.  Push your code to a Git repository (e.g., GitHub, GitLab).
+2.  Go to your [Vercel Dashboard](https://vercel.com/dashboard) and create a new project.
+3.  Import your Git repository.
+4.  **Crucially, you must configure the environment variables.** In your Vercel project's settings, navigate to **Settings > Environment Variables**.
+5.  Add the `NEWS_API_KEY` with the value you obtained from NewsAPI.
+    - **Name:** `NEWS_API_KEY`
+    - **Value:** `YOUR_API_KEY_HERE`
+6.  Click **Deploy**.
+
+**Important:** The news feed will not work on your deployed site unless you set the `NEWS_API_KEY` in your Vercel project settings.
 
 ---
 

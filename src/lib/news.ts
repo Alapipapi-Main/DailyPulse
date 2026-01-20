@@ -16,7 +16,7 @@ const categoryMapping: Partial<Record<Category, string>> = {
 
 async function fetchNewsForCategory(category: Category): Promise<Article[]> {
   if (!API_KEY || API_KEY === 'YOUR_API_KEY_HERE') {
-    console.error("News API key is missing. Please add it to your .env file.");
+    console.error("News API key is missing. Please add it to your .env file for local development, or configure it in your deployment environment.");
     return [];
   }
 
