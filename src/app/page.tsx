@@ -4,7 +4,7 @@ import { Header } from '@/components/app/header';
 import NewsFeed from '@/components/app/news-feed';
 import { useNewsStore } from '@/store/use-news-store';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { getNewsArticles } from '@/lib/news';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
@@ -14,14 +14,14 @@ export default function Home() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
-  const isInitialRender = useRef(true);
   
-  const { isOnboarded, articles, setArticles, lastFetched, interests } = useNewsStore((state) => ({
+  const { isOnboarded, articles, setArticles, lastFetched, interests, lastFetchedInterests } = useNewsStore((state) => ({
     isOnboarded: state.isOnboarded,
     articles: state.articles,
     setArticles: state.setArticles,
     lastFetched: state.lastFetched,
     interests: state.interests,
+    lastFetchedInterests: state.lastFetchedInterests,
   }));
 
   useEffect(() => {
@@ -42,8 +42,12 @@ export default function Home() {
     setIsLoading(true);
     try {
       const currentInterests = useNewsStore.getState().interests;
+      if (currentInterests.length === 0) {
+        setArticles([], []);
+        return;
+      }
       const fetchedArticles = await getNewsArticles(currentInterests);
-      setArticles(fetchedArticles);
+      setArticles(fetchedArticles, currentInterests);
     } catch (error) {
       console.error("Failed to fetch articles", error);
     } finally {
@@ -51,37 +55,29 @@ export default function Home() {
     }
   }, [setArticles]);
   
-  // Effect for initial load & daily refresh
-  useEffect(() => {
-    if (isHydrated) {
-      if (!isOnboarded) {
-        router.replace('/onboarding');
-        return;
-      }
-
-      const now = Date.now();
-      const oneDay = 24 * 60 * 60 * 1000;
-      const shouldRefresh = !lastFetched || (now - lastFetched > oneDay);
-
-      if (articles.length === 0 || shouldRefresh) {
-        handleRefresh();
-      }
-    }
-  }, [isHydrated, isOnboarded, articles.length, handleRefresh, router, lastFetched]);
-
-  // Effect for refreshing when interests change
+  // Combined effect for all refresh scenarios
   useEffect(() => {
     if (!isHydrated) return;
-
-    // Skip the initial render to avoid a double fetch.
-    // The first fetch is handled by the effect above.
-    if (isInitialRender.current) {
-      isInitialRender.current = false;
+    
+    if (!isOnboarded) {
+      router.replace('/onboarding');
       return;
     }
 
-    handleRefresh();
-  }, [interests, isHydrated, handleRefresh]);
+    const now = Date.now();
+    const oneDay = 24 * 60 * 60 * 1000;
+    
+    // Using JSON.stringify for simple array comparison.
+    const interestsHaveChanged = JSON.stringify(interests) !== JSON.stringify(lastFetchedInterests);
+    const articlesAreStale = !lastFetched || (now - lastFetched > oneDay);
+    const noArticles = articles.length === 0 && interests.length > 0;
+
+    // Refresh if interests have changed, articles are stale, or the feed is empty.
+    if (noArticles || articlesAreStale || interestsHaveChanged) {
+      handleRefresh();
+    }
+    
+  }, [isHydrated, isOnboarded, interests, lastFetched, lastFetchedInterests, articles.length, router, handleRefresh]);
 
 
   if (!isHydrated || !isOnboarded) {
