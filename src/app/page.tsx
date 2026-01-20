@@ -89,7 +89,7 @@ export default function Home() {
             Your Daily Pulse
           </h1>
           <p className="text-muted-foreground">
-            Here are the latest articles based on your interests.
+            Here are the latest summarized articles based on your interests.
           </p>
         </div>
         <NewsFeed articles={initialArticles} />

@@ -39,7 +39,7 @@ export default function OnboardingPage() {
                 Welcome to DailyPulse
               </h1>
               <p className="text-lg text-muted-foreground">
-                What are you interested in? Choose at least one topic to get started.
+                Get your daily news, summarized. Choose your interests to get started.
               </p>
             </div>
             <div className="rounded-lg border bg-card p-6">

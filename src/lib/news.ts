@@ -1,6 +1,7 @@
 'use server';
 
 import { type Article, type Category } from './types';
+import { summarizeArticle } from '@/ai/flows/summarize-flow';
 
 const API_KEY = process.env.NEWS_API_KEY;
 const BASE_URL = 'https://newsapi.org/v2';
@@ -35,7 +36,7 @@ async function fetchNewsForCategory(category: Category): Promise<Article[]> {
 
     const data = await response.json();
 
-    return data.articles
+    const articles: Article[] = data.articles
       .map((article: any): Article | null => {
         if (!article.title || !article.urlToImage || !article.content) {
           return null;
@@ -53,6 +54,19 @@ async function fetchNewsForCategory(category: Category): Promise<Article[]> {
         };
       })
       .filter((article: Article | null): article is Article => article !== null);
+
+      const summarizedArticles = await Promise.all(
+        articles.map(async (article) => {
+            const summaryData = await summarizeArticle({ content: article.content });
+            return {
+                ...article,
+                content: summaryData.summary
+            };
+        })
+    );
+    
+    return summarizedArticles;
+
   } catch (error) {
     console.error(`Failed to fetch news for ${category} from API:`, error);
     return [];

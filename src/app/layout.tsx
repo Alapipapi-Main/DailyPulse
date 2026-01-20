@@ -6,7 +6,7 @@ import { ThemeProvider } from '@/context/theme-provider';
 
 export const metadata: Metadata = {
   title: 'DailyPulse',
-  description: 'Your daily dose of personalized news.',
+  description: 'Your daily dose of summarized news.',
 };
 
 export default function RootLayout({
