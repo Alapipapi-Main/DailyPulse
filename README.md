@@ -7,10 +7,13 @@ DailyPulse is a modern news aggregation app that delivers concise, summarized ar
 ## ✨ Features
 
 - **Personalized Feed:** Select your interests (e.g., Technology, AI, Sports) to get a news feed tailored to you.
-- **AI-Powered Summaries (Optional):** Originally built with a placeholder summarizer, it can be easily upgraded to use Genkit and the Gemini API for intelligent, AI-generated article summaries.
+- **Smart Refresh:** Your feed automatically updates when you change your interests or when the articles are over 24 hours old.
+- **Persistent Cache:** Articles are cached in your browser, so your feed stays consistent across page loads and visits.
+- **Manual Refresh:** Don't like the current articles? Hit the refresh button to get a new batch instantly.
 - **Save for Later:** Bookmark articles you find interesting to read them later on the "Saved Articles" page.
 - **Light & Dark Mode:** Choose between a light or dark theme for comfortable reading at any time of day.
-- **Manual Refresh:** Don't like the current articles? Hit the refresh button to get a new batch instantly.
+- **AI-Powered Summaries (Optional):** Originally built with a placeholder summarizer, it can be easily upgraded to use Genkit and the Gemini API for intelligent, AI-generated article summaries.
+- **Robust Image Fallbacks:** Displays a clean, custom placeholder for any articles that have missing or broken images, ensuring a polished UI.
 
 ## 🚀 Tech Stack
 
