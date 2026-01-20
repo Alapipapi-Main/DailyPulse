@@ -59,7 +59,7 @@ export function NewsCard({ article }: NewsCardProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-grow p-4 pt-0">
-        <p className="text-sm text-muted-foreground line-clamp-3">{article.content}</p>
+        <p className="text-sm text-muted-foreground">{article.content}</p>
       </CardContent>
       <CardFooter className="flex justify-between items-center p-4 pt-0">
         <div className="text-xs text-muted-foreground font-medium">
