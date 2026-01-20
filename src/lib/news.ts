@@ -37,8 +37,8 @@ async function fetchNewsForCategory(category: Category): Promise<Article[]> {
     const data = await response.json();
 
     const articles: Article[] = data.articles
-      .map((article: any): Article | null => {
-        if (!article.title || !article.urlToImage || !article.content) {
+      .map((article: any, index: number): Article | null => {
+        if (!article.title || !article.content || !article.url) {
           return null;
         }
 
@@ -49,7 +49,9 @@ async function fetchNewsForCategory(category: Category): Promise<Article[]> {
           source: article.source.name,
           publishedAt: article.publishedAt,
           category: category,
-          imageUrl: article.urlToImage.replace(/^http:/, 'https:'),
+          imageUrl: article.urlToImage
+            ? article.urlToImage.replace(/^http:/, 'https:')
+            : `https://picsum.photos/seed/${category}${index}/640/400`,
           imageHint: category.toLowerCase(),
         };
       })
