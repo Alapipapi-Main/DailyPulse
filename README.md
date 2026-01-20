@@ -37,8 +37,8 @@ Follow these instructions to get the project up and running on your local machin
 Clone the repository and install the dependencies:
 
 ```bash
-git clone <your-repository-url>
-cd <repository-folder>
+git clone https://github.com/Alapipapi-Main/DailyPulse
+cd DailyPulse
 npm install
 ```
 
