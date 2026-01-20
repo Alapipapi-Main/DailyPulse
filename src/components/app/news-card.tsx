@@ -50,6 +50,7 @@ export function NewsCard({ article }: NewsCardProps) {
           data-ai-hint={article.imageHint}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           onError={handleImageError}
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
       </div>
