@@ -8,6 +8,7 @@ interface NewsState {
   isOnboarded: boolean;
   savedArticles: Article[];
   articles: Article[];
+  lastFetched: number | null;
   setInterests: (interests: Category[]) => void;
   setArticles: (articles: Article[]) => void;
   finishOnboarding: () => void;
@@ -22,8 +23,9 @@ export const useNewsStore = create<NewsState>()(
       isOnboarded: false,
       savedArticles: [],
       articles: [],
+      lastFetched: null,
       setInterests: (interests) => set({ interests }),
-      setArticles: (articles) => set({ articles }),
+      setArticles: (articles) => set({ articles, lastFetched: Date.now() }),
       finishOnboarding: () => set({ isOnboarded: true }),
       isArticleSaved: (articleId) => {
         return get().savedArticles.some((a) => a.id === articleId);

@@ -15,10 +15,11 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   
-  const { isOnboarded, articles, setArticles } = useNewsStore((state) => ({
+  const { isOnboarded, articles, setArticles, lastFetched } = useNewsStore((state) => ({
     isOnboarded: state.isOnboarded,
     articles: state.articles,
     setArticles: state.setArticles,
+    lastFetched: state.lastFetched,
   }));
 
   useEffect(() => {
@@ -52,11 +53,18 @@ export default function Home() {
     if (isHydrated) {
       if (!isOnboarded) {
         router.replace('/onboarding');
-      } else if (articles.length === 0) {
+        return;
+      }
+
+      const now = Date.now();
+      const oneDay = 24 * 60 * 60 * 1000;
+      const shouldRefresh = !lastFetched || (now - lastFetched > oneDay);
+
+      if (articles.length === 0 || shouldRefresh) {
         handleRefresh();
       }
     }
-  }, [isHydrated, isOnboarded, articles.length, handleRefresh, router]);
+  }, [isHydrated, isOnboarded, articles.length, handleRefresh, router, lastFetched]);
 
   if (!isHydrated || !isOnboarded) {
     return (
